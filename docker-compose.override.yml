@@ -1,6 +1,54 @@
 version: '2'
+
 services:
 
+  zammad-backup:
+    volumes:
+      - ./zammad-backup:/var/tmp/zammad
+      - ./zammad-data:/opt/zammad
+    network_mode: bridge
+
+
+  zammad-elasticsearch:
+    volumes:
+      - ./elasticsearch-data:/usr/share/elasticsearch/data
+    network_mode: bridge
+
+  zammad-init:
+    volumes:
+      - ./zammad-data:/opt/zammad
+    network_mode: bridge
+
+  zammad-memcached:
+    network_mode: bridge
+
   zammad-nginx:
-    ports:
-      - "80:80"
+    volumes:
+      - ./zammad-data:/opt/zammad
+    network_mode: bridge
+    environment:
+      VIRTUAL_HOST: zammad.daten-cloud.de
+      LETSENCRYPT_HOST: zammad.daten-cloud.de
+      LETSENCRYPT_EMAIL: wb@stylite.de
+      VIRTUAL_PORT: 80
+      HTTPS_METHOD: redirect
+
+  zammad-postgresql:
+    volumes:
+      - ./postgresql-data:/var/lib/postgresql/data
+    network_mode: bridge
+
+  zammad-railsserver:
+    volumes:
+      - ./zammad-data:/opt/zammad
+    network_mode: bridge
+
+  zammad-scheduler:
+    volumes:
+      - zammad-data:/opt/zammad
+    network_mode: bridge
+
+  zammad-websocket:
+    volumes:
+      - ./zammad-data:/opt/zammad
+    network_mode: bridge
